@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>测测你的职业人格</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+        .page { display: none; min-height: 100vh; animation: fadeIn 0.3s ease-in-out; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .logo { font-size: 80px; text-align: center; margin-bottom: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .title { font-size: 28px; font-weight: 700; color: white; text-align: center; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .subtitle { font-size: 16px; color: rgba(255, 255, 255, 0.9); text-align: center; margin-bottom: 30px; }
+        .stats { text-align: center; margin-bottom: 30px; }
+        .stats-text { color: rgba(255, 255, 255, 0.8); font-size: 14px; }
+        .stats-text strong { color: white; font-size: 18px; }
+        .features { display: flex; justify-content: center; gap: 20px; margin-top: 40px; }
+        .feature-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .feature-icon { font-size: 24px; }
+        .feature-text { color: rgba(255, 255, 255, 0.8); font-size: 12px; }
+        .btn-primary {
+            display: block; width: 100%; max-width: 300px; margin: 0 auto; padding: 16px 32px;
+            background: white; color: #667eea; border: none; border-radius: 50px;
+            font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); }
+        .btn-secondary {
+            padding: 12px 24px; background: rgba(255, 255, 255, 0.2); color: white;
+            border: 2px solid white; border-radius: 50px; font-size: 16px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.3); }
+        .button-group { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+        .quiz-header { margin-bottom: 30px; }
+        .btn-back { background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 5px; }
+        .progress { text-align: center; color: white; font-size: 16px; margin: 10px 0; }
+        .progress-bar { height: 6px; background: rgba(255, 255, 255, 0.3); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; transition: width 0.3s ease; border-radius: 3px; }
+        .question-container {
+            background: white; border-radius: 20px; padding: 30px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .question-text { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 25px; line-height: 1.5; }
+        .options-container { display: flex; flex-direction: column; gap: 15px; }
+        .option {
+            padding: 18px 20px; background: #f5f5f5; border: 2px solid transparent;
+            border-radius: 12px; font-size: 16px; color: #555; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .option:hover { background: #f0f0f0; border-color: #667eea; }
+        .option:active { transform: scale(0.98); }
+        .result-header { text-align: center; margin-bottom: 30px; animation: fadeIn 0.5s ease-in-out; }
+        .result-code { font-size: 48px; font-weight: 800; color: white; margin-bottom: 10px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+        .result-alias { font-size: 24px; font-weight: 600; color: rgba(255, 255, 255, 0.95); }
+        .dimensions-container {
+            background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .dimensions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .dimension {
+            padding: 8px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border-radius: 20px; font-size: 14px; font-weight: 600;
+        }
+        .result-section {
+            background: white; border-radius: 20px; padding: 25px 20px; margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .result-section h3 { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 12px; }
+        .result-text { font-size: 15px; line-height: 1.8; color: #555; white-space: pre-wrap; }
+        .result-text.highlight { font-size: 18px; font-weight: 600; color: #667eea; text-align: center; }
+        #poster-page { background: #f5f5f5; }
+        #poster-canvas {
+            display: block; margin: 20px auto; max-width: 100%; border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        .poster-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        .poster-buttons button { flex: 1; max-width: 200px; }
+        .loading {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;
+        }
+        .loading.active { display: flex; }
+        .loading-spinner {
+            width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 480px) {
+            .title { font-size: 24px; }
+            .result-code { font-size: 40px; }
+            .result-alias { font-size: 20px; }
+            .question-text { font-size: 18px; }
+            .option { font-size: 15px; padding: 15px 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="home-page" class="page active">
+        <div class="container">
+            <div class="logo">🎯</div>
+            <h1 class="title">测测你的职业人格</h1>
+            <p class="subtitle">3分钟，看看你适合什么工作</p>
+            <div class="stats">
+                <span class="stats-text">已有 <strong>12,304</strong> 人测试</span>
+            </div>
+            <button class="btn-primary" onclick="startQuiz()">开始测试</button>
+            <div class="features">
+                <div class="feature-item">
+                    <span class="feature-icon">⚡</span>
+                    <span class="feature-text">3分钟完成</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✨</span>
+                    <span class="feature-text">有趣不无聊</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📤</span>
+                    <span class="feature-text">分享给朋友</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-page" class="page">
+        <div class="container">
+            <div class="quiz-header">
+                <button class="btn-back" onclick="goBack()">←</button>
+                <div class="progress">
+                    <span id="current-question">1</span> / <span id="total-questions">8</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+            <div class="question-container">
+                <p id="question-text" class="question-text"></p>
+                <div id="options-container" class="options-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-page" class="page">
+        <div class="container">
+            <div class="result-header">
+                <div class="result-code" id="result-code">ENTA</div>
+                <div class="result-alias" id="result-alias">天生的连接者</div>
+            </div>
+            <div class="dimensions-container">
+                <div id="dimensions" class="dimensions"></div>
+            </div>
+            <div class="result-section">
+                <h3>💡 核心特质</h3>
+                <p id="result-traits" class="result-text"></p>
+            </div>
+            <div class="result-section">
+                <h3>🎬 职位倾向</h3>
+                <p id="result-jobs" class="result-text"></p>
+            </div>
+            <div class="result-section">
+                <h3>💭 未来场景</h3>
+                <p id="result-scenario" class="result-text"></p>
+            </div>
+            <div class="result-section">
+                <h3>👥 同类占比</h3>
+                <p id="result-percentage" class="result-text highlight"></p>
+            </div>
+            <div class="button-group">
+                <button class="btn-secondary" onclick="restartQuiz()">再测一次</button>
+                <button class="btn-primary" onclick="generatePoster()">生成海报分享</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="poster-page" class="page">
+        <div class="container">
+            <canvas id="poster-canvas"></canvas>
+            <div class="poster-buttons">
+                <button class="btn-secondary" onclick="goBackToResult()">返回</button>
+                <button class="btn-primary" onclick="downloadPoster()">保存图片</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+const questions = [
+    { id: 1, text: "迎新会上你更可能是？", options: [
+        { text: "自我介绍拿话筒", dimensions: { E: 3, T: 1 } },
+        { text: "躲角落听别人说", dimensions: { I: 3, J: 1 } },
+        { text: "端水递水打辅助", dimensions: { A: 3, S: 1 } }
+    ]},
+    { id: 2, text: "老师布置创新作业，你？", options: [
+        { text: "先想怎么拿高分", dimensions: { S: 2, R: 2 } },
+        { text: "想怎么与众不同", dimensions: { N: 3, I: 1 } },
+        { text: "查查别人怎么做", dimensions: { S: 2, A: 2 } }
+    ]},
+    { id: 3, text: "和室友矛盾，你会？", options: [
+        { text: "直接摊开说", dimensions: { E: 2, T: 1 } },
+        { text: "自己忍忍算了", dimensions: { I: 2, J: 1 } },
+        { text: "找第三人调解", dimensions: { A: 2, S: 1 } }
+    ]},
+    { id: 4, text: "社团招新你会选？", options: [
+        { text: "技术类社团", dimensions: { S: 2, I: 1 } },
+        { text: "文艺类社团", dimensions: { N: 2, I: 1 } },
+        { text: "看朋友去哪", dimensions: { A: 2, S: 2 } }
+    ]},
+    { id: 5, text: "考试复习你习惯？", options: [
+        { text: "列计划按部就班", dimensions: { J: 3, S: 1 } },
+        { text: "临时抱佛脚", dimensions: { T: 2, N: 1 } },
+        { text: "找朋友一起学", dimensions: { A: 2, S: 1 } }
+    ]},
+    { id: 6, text: "收到兼职offer，你？", options: [
+        { text: "先问多少钱", dimensions: { S: 2, R: 2 } },
+        { text: "看能不能学到东西", dimensions: { N: 2, I: 1 } },
+        { text: "问朋友意见", dimensions: { A: 2, S: 1 } }
+    ]},
+    { id: 7, text: "看到同学创业，你？", options: [
+        { text: "观望不参与", dimensions: { J: 2, S: 1 } },
+        { text: "跃跃欲试加入", dimensions: { T: 3, N: 1 } },
+        { text: "提供建议但不入伙", dimensions: { S: 2, J: 1 } }
+    ]},
+    { id: 8, text: "理想的一天是？", options: [
+        { text: "独自搞定一项任务", dimensions: { S: 2, I: 2 } },
+        { text: "和团队合作完成项目", dimensions: { A: 3, E: 1 } },
+        { text: "混合型，看情况", dimensions: { N: 1, A: 1, J: 1 } }
+    ]}
+];
+
+const results = {
+    ENTA: { alias: "天生的连接者", traits: "E外向 × N直觉 × T挑战 × A团队 × A理想\n\n你天生就是个\"连接者\"——善于和人打交道，脑洞大总能想到新点子。不安于现状，喜欢迎接挑战；团队合作是你最舒服的模式。有点理想主义色彩，相信改变的力量。", jobs: "产品经理、运营、销售、创业者", scenario: "你可能每天都在\"连接人\"和\"搞定事\"之间切换。早上和产品聊需求，下午和运营聊数据，晚上和设计聊交互。像在玩一个大型多人在线游戏，爽且充实。", percentage: 8 },
+    ENTS: { alias: "实干型连接者", traits: "E外向 × N直觉 × T挑战 × A团队 × S现实\n\n你善于连接人，但更注重实际落地。喜欢和人打交道，脑洞大但会考虑可行性。敢于挑战，团队协作能力强。比较现实，看重结果。", jobs: "销售、商务拓展、项目经理", scenario: "你可能每天都在和客户聊需求、跟进项目进度、协调团队资源。像在玩一个\"资源整合\"的游戏，每一步都要踩准节奏。", percentage: 7 },
+    ENJA: { alias: "理想型破局者", traits: "E外向 × N直觉 × J稳定 × A团队 × A理想\n\n你有理想主义色彩，喜欢稳定但有挑战的工作。善于和人合作，脑洞大，追求有意义的事情。不安于现状，但希望有节奏。", jobs: "创业者、社团负责人、主播", scenario: "你可能每天都在思考\"怎么把事情做得更有意义\"，和团队一起创造一些新的东西。像在玩一个\"建设\"游戏，慢慢搭建自己的王国。", percentage: 5 },
+    ENJS: { alias: "理想型执行者", traits: "E外向 × N直觉 × J稳定 × A团队 × S现实\n\n你喜欢团队合作，脑洞大但务实。追求稳定的工作节奏，但也不抗拒有挑战的任务。比较现实，看重实际产出。", jobs: "市场推广、活动策划、公关", scenario: "你可能每天都在策划活动、跟进执行、和团队一起优化细节。像在玩一个\"项目管理\"游戏，把每个环节都做到最好。", percentage: 6 },
+    ESTA: { alias: "稳定型协作者", traits: "E外向 × S现实 × T挑战 × A团队 × A理想\n\n你喜欢和人打交道，比较务实，有理想主义色彩。追求稳定但也会迎接挑战。团队协作型选手。", jobs: "人力资源、客户成功、培训", scenario: "你可能每天都在和不同的人沟通、协调资源、帮助团队解决问题。像在玩一个\"社交\"游戏，用你的能力连接每个人。", percentage: 9 },
+    ESTS: { alias: "团队型执行者", traits: "E外向 × S现实 × T挑战 × A团队 × S现实\n\n你是团队型的务实派，喜欢和人合作但注重结果。敢于挑战，但会考虑可行性。看重实际产出。", jobs: "销售、商务、运营执行", scenario: "你可能每天都在和客户打交道、跟进订单、和团队一起完成目标。像在玩一个\"打怪升级\"游戏，每一步都很踏实。", percentage: 10 },
+    ESJA: { alias: "稳定型理想者", traits: "E外向 × S现实 × J稳定 × A团队 × A理想\n\n你喜欢稳定的工作，注重团队合作，有理想主义色彩。务实但不缺乏追求。", jobs: "公务员、教师、公益", scenario: "你可能每天都在按部就班地工作，帮助别人、解决问题。像在玩一个\"守护\"游戏，用自己的能力守护更多人。", percentage: 8 },
+    ESJS: { alias: "团队型管理者", traits: "E外向 × S现实 × J稳定 × A团队 × S现实\n\n你是团队型的管理者，务实、稳定、注重结果。善于协调团队，把事情做好。", jobs: "团队Leader、行政、管理", scenario: "你可能每天都在和团队开会、跟进进度、协调资源。像在玩一个\"策略\"游戏，统筹全局。", percentage: 7 },
+    INTA: { alias: "专注型理想者", traits: "I内向 × N直觉 × T挑战 × A个人 × A理想\n\n你喜欢独处，脑洞大，有理想主义色彩。敢于挑战，追求有意义的事情。个人能力强，喜欢深度思考。", jobs: "设计师、编剧、内容创作", scenario: "你可能每天都在独处中思考、创作、打磨作品。像在玩一个\"创造\"游戏，把脑子里的东西变成现实。", percentage: 4 },
+    INTS: { alias: "独立型破局者", traits: "I内向 × N直觉 × T挑战 × A个人 × S现实\n\n你喜欢独处，脑洞大但务实。敢于挑战，个人能力强，喜欢深度解决问题。", jobs: "数据分析师、算法工程师", scenario: "你可能每天都在分析数据、寻找规律、优化算法。像在玩一个\"解谜\"游戏，每个问题都有最优解。", percentage: 3 },
+    INJA: { alias: "理想型思考者", traits: "I内向 × N直觉 × J稳定 × A团队 × A理想\n\n你喜欢独处，脑洞大，有理想主义色彩。追求稳定但看重意义。适合团队中需要深度思考的角色。", jobs: "产品经理、咨询、分析师", scenario: "你可能每天都在深入思考、分析问题、提出方案。像在玩一个\"策略\"游戏，每一步都要深思熟虑。", percentage: 5 },
+    INJS: { alias: "专注型执行者", traits: "I内向 × N直觉 × J稳定 × A团队 × S现实\n\n你喜欢独处，脑洞大但务实。追求稳定的工作节奏，团队中默默贡献。", jobs: "数据分析师、研究员", scenario: "你可能每天都在分析数据、撰写报告、为团队提供洞察。像在玩一个\"探险\"游戏，发现别人看不到的东西。", percentage: 6 },
+    ISTA: { alias: "务实型协作者", traits: "I内向 × S现实 × T挑战 × A个人 × A理想\n\n你喜欢独处，务实，有理想主义色彩。敢于挑战，个人能力强。", jobs: "开发工程师、测试、运维", scenario: "你可能每天都在写代码、调试、解决问题。像在玩一个\"搭建\"游戏，把系统搭建得越来越稳固。", percentage: 8 },
+    ISTS: { alias: "独立型执行者", traits: "I内向 × S现实 × T挑战 × A个人 × S现实\n\n你喜欢独处，务实，敢于挑战。个人能力强，专注完成任务。", jobs: "程序员、技术支持", scenario: "你可能每天都在写代码、调试、优化。像在玩一个\"通关\"游戏，把每个任务都完成得很好。", percentage: 9 },
+    ISJA: { alias: "稳定型思考者", traits: "I内向 × S现实 × J稳定 × A团队 × A理想\n\n你喜欢独处，务实，追求稳定。有理想主义色彩，团队中提供深度思考。", jobs: "研究员、分析师、顾问", scenario: "你可能每天都在研究、分析、提供专业建议。像在玩一个\"解谜\"游戏，找到问题的根源。", percentage: 5 },
+    ISJS: { alias: "专注型管理者", traits: "I内向 × S现实 × J稳定 × A团队 × S现实\n\n你喜欢独处，务实，追求稳定。团队中默默管理，把事情做好。", jobs: "技术负责人、架构师", scenario: "你可能每天都在设计架构、优化系统、指导团队。像在玩一个\"战略\"游戏，把整个系统搭建起来。", percentage: 10 }
+};
+
+let currentQuestionIndex = 0, answers = [], userResult = null;
+
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+}
+function showLoading(show) {
+    const loading = document.getElementById('loading');
+    show ? loading.classList.add('active') : loading.classList.remove('active');
+}
+function startQuiz() {
+    currentQuestionIndex = 0;
+    answers = [];
+    showPage('quiz-page');
+    renderQuestion();
+}
+function renderQuestion() {
+    const q = questions[currentQuestionIndex];
+    document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+    document.getElementById('total-questions').textContent = questions.length;
+    document.getElementById('progress-fill').style.width = ((currentQuestionIndex + 1) / questions.length * 100) + '%';
+    document.getElementById('question-text').textContent = q.text;
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+    q.options.forEach((opt, i) => {
+        const el = document.createElement('div');
+        el.className = 'option';
+        el.textContent = opt.text;
+        el.onclick = () => selectOption(i);
+        container.appendChild(el);
+    });
+}
+function selectOption(optIndex) {
+    const q = questions[currentQuestionIndex];
+    answers.push({ questionId: q.id, selectedOption: optIndex, dimensions: q.options[optIndex].dimensions });
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+        setTimeout(renderQuestion, 300);
+    } else {
+        setTimeout(calculateResult, 300);
+    }
+}
+function calculateResult() {
+    showLoading(true);
+    const scores = { E: 0, I: 0, N: 0, S: 0, T: 0, J: 0, A: 0, R: 0, A2: 0, S2: 0 };
+    answers.forEach(a => Object.entries(a.dimensions).forEach(([d, s]) => { if (scores.hasOwnProperty(d)) scores[d] += s; }));
+    const dims = [scores.E >= scores.I ? 'E' : 'I', scores.N >= scores.S ? 'N' : 'S', scores.T >= scores.J ? 'T' : 'J', scores.A >= scores.R ? 'A' : 'S', scores.A2 >= scores.S2 ? 'A' : 'S'];
+    const resultCode = dims.slice(0, 4).join('');
+    userResult = results[resultCode] || results['ENTA'];
+    setTimeout(() => { renderResult(); showLoading(false); showPage('result-page'); }, 500);
+}
+function renderResult() {
+    document.getElementById('result-code').textContent = Object.keys(results).find(k => results[k] === userResult) || 'ENTA';
+    document.getElementById('result-alias').textContent = userResult.alias;
+    document.getElementById('result-traits').textContent = userResult.traits;
+    document.getElementById('result-jobs').textContent = userResult.jobs;
+    document.getElementById('result-scenario').textContent = userResult.scenario;
+    document.getElementById('result-percentage').textContent = `${userResult.percentage}% 的大学生和你一样`;
+    const container = document.getElementById('dimensions');
+    container.innerHTML = '';
+    ['外向', '直觉', '挑战', '团队', '理想'].forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'dimension';
+        el.textContent = d;
+        container.appendChild(el);
+    });
+}
+function goBack() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        answers.pop();
+        renderQuestion();
+    } else {
+        showPage('home-page');
+    }
+}
+function restartQuiz() {
+    currentQuestionIndex = 0;
+    answers = [];
+    userResult = null;
+    showPage('home-page');
+}
+function generatePoster() {
+    showLoading(true);
+    const canvas = document.getElementById('poster-canvas');
+    const ctx = canvas.getContext('2d');
+    const width = 750, height = 1334;
+    canvas.width = width;
+    canvas.height = height;
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, '#667eea');
+    gradient.addColorStop(1, '#764ba2');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.roundRect(50, 100, width - 100, height - 200, 20);
+    ctx.fill();
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 36px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('测测你的职业人格', width / 2, 200);
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(80, 230);
+    ctx.lineTo(width - 80, 230);
+    ctx.stroke();
+    ctx.fillStyle = '#333333';
+    ctx.font = 'bold 28px Arial';
+    ctx.fillText('你测出来是：', width / 2, 320);
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 80px Arial';
+    ctx.fillText(Object.keys(results).find(k => results[k] === userResult) || 'ENTA', width / 2, 420);
+    ctx.fillStyle = '#333333';
+    ctx.font = 'bold 32px Arial';
+    ctx.fillText(userResult.alias, width / 2, 480);
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.beginPath();
+    ctx.moveTo(80, 520);
+    ctx.lineTo(width - 80, 520);
+    ctx.stroke();
+    let xPos = 100;
+    ['外向', '直觉', '挑战', '团队', '理想'].forEach(dim => {
+        ctx.fillStyle = 'rgba(102, 126, 234, 0.1)';
+        ctx.beginPath();
+        ctx.roundRect(xPos, 560, 100, 40, 10);
+        ctx.fill();
+        ctx.fillStyle = '#667eea';
+        ctx.font = 'bold 20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(dim, xPos + 50, 590);
+        xPos += 120;
+    });
+    ctx.fillStyle = '#333333';
+    ctx.font = 'bold 28px Arial';
+    ctx.fillText('同类占比', width / 2, 700);
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 48px Arial';
+    ctx.fillText(`${userResult.percentage}%`, width / 2, 760);
+    ctx.fillStyle = '#666666';
+    ctx.font = '24px Arial';
+    ctx.fillText('的大学生和你一样', width / 2, 800);
+    ctx.fillStyle = '#999999';
+    ctx.font = '24px Arial';
+    ctx.fillText('👇 长按保存分享', width / 2, 1000);
+    setTimeout(() => { showLoading(false); showPage('poster-page'); }, 500);
+}
+function goBackToResult() {
+    showPage('result-page');
+}
+function downloadPoster() {
+    const canvas = document.getElementById('poster-canvas');
+    const link = document.createElement('a');
+    link.download = '职业人格测试结果.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+    </script>
+</body>
+</html>
